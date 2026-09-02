@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>淨水器服務滿意度問卷</title>
+  <meta name="description" content="服務完成後的手機版滿意度回饋問卷" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page-shell">
+
+    <section id="blocked-screen" class="survey-card success-card device-blocked hidden" aria-live="polite">
+      <div class="brand" aria-label="千山淨水"><span>千山淨水</span></div>
+      <div class="success-content">
+        <h1>問卷連結無效</h1>
+        <p class="success-copy" id="blocked-message"></p>
+      </div>
+    </section>
+
+    <section id="success-screen" class="survey-card success-card hidden" aria-live="polite">
+      <div class="brand" aria-label="千山淨水"><span>千山淨水</span></div>
+      <div class="success-content">
+        <div class="success-check" aria-hidden="true">&#10003;</div>
+        <p class="success-label">回饋已送出</p>
+        <h1>謝謝您的寶貴意見</h1>
+        <p class="success-copy">我們已收到這次服務的回饋，將持續為您提供更安心的用水服務。</p>
+      </div>
+      <p class="completion-note">此問卷已完成，無需再次填寫</p>
+    </section>
+
+    <section id="form-screen" class="survey-card hidden">
+      <div class="brand" aria-label="千山淨水"><span>千山淨水</span></div>
+
+      <header class="intro">
+        <p class="eyebrow">感谢您今日讓我們為您服务</p>
+        <h1>請問您對這次的服務滿意嗎？</h1>
+      </header>
+
+      <fieldset class="rating-group" style="border:0;padding:0;margin:26px 0 0;">
+        <legend class="sr-only">請選擇滿意或不滿意</legend>
+        <button type="button" id="rating-satisfied" class="rating-choice satisfied" aria-pressed="false">
+          <span class="face" aria-hidden="true">&#9786;</span>
+          <span class="rating-label">滿意</span>
+        </button>
+        <button type="button" id="rating-unsatisfied" class="rating-choice unsatisfied" aria-pressed="false">
+          <span class="face" aria-hidden="true">&#9785;</span>
+          <span class="rating-label">不滿意</span>
+        </button>
+      </fieldset>
+
+      <div class="comment-section">
+        <label for="survey-comment">留下原因或建議 <span>（選填）</span></label>
+        <textarea id="survey-comment" rows="4" maxlength="300" placeholder="您的每一句話，我們都會認真看"></textarea>
+        <span class="character-count" id="character-count" aria-live="polite">0/300</span>
+      </div>
+
+      <button type="button" id="submit-button" class="submit-button">確認送出</button>
+      <p id="attempted-error" class="helper-text error hidden" aria-live="polite">請先選擇滿意或不滿意</p>
+      <p id="submit-error" class="helper-text error hidden" aria-live="polite"></p>
+    </section>
+
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
