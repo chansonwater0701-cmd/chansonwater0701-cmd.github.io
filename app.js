@@ -1,14 +1,21 @@
 (function () {
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
+  if (token && window.history.replaceState) {
+    params.delete("token");
+    const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+    window.history.replaceState(null, document.title, cleanUrl);
+  }
   const customerCode = params.get("uid") || "";
   const phone = params.get("phone") || "";
-  const adminMode = params.get("admin") === "true" || params.get("mode") === "dev";
   const storageKey = token ? `survey_completed_${token}` : "";
+  const completedRatingKey = token ? `survey_completed_rating_${token}` : "";
 
   const screens = {
     blocked: document.getElementById("blocked-screen"),
     success: document.getElementById("success-screen"),
+    satisfied: document.getElementById("satisfied-screen"),
+    unsatisfied: document.getElementById("unsatisfied-screen"),
     form: document.getElementById("form-screen"),
   };
 
@@ -22,8 +29,16 @@
     showScreen("blocked");
   }
 
-  if (storageKey && window.localStorage.getItem(storageKey) === "true") {
+  function showResult(nextRating) {
+    if (nextRating === "satisfied" || nextRating === "unsatisfied") {
+      showScreen(nextRating);
+      return;
+    }
     showScreen("success");
+  }
+
+  if (storageKey && window.localStorage.getItem(storageKey) === "true") {
+    showResult(completedRatingKey ? window.localStorage.getItem(completedRatingKey) : null);
     return;
   }
 
@@ -94,13 +109,24 @@
         }),
       });
 
+      if (!response.ok) {
+        if (response.status === 410) throw new Error("這份問卷連結已過期，請聯絡客服重新取得連結。");
+        if (response.status === 409) throw new Error("這份問卷已經送出過，無需再次填寫。");
+        if (response.status === 404) throw new Error("問卷連結無效，請確認簡訊中的連結是否完整。");
+        throw new Error("目前無法送出，請確認網路後再試一次。");
+      }
       const result = await response.json().catch(() => null);
       if (!result || result.error) {
         throw new Error((result && result.error) || "送出失敗");
       }
 
-      if (storageKey) window.localStorage.setItem(storageKey, "true");
-      showScreen("success");
+      if (storageKey) {
+        window.localStorage.setItem(storageKey, "true");
+        if (completedRatingKey) {
+          window.localStorage.setItem(completedRatingKey, rating);
+        }
+      }
+      showResult(rating);
     } catch (error) {
       submitError.textContent = error instanceof Error ? error.message : "目前無法送出，請稍後再試";
       submitError.classList.remove("hidden");
